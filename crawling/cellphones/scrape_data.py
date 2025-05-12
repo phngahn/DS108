@@ -6,7 +6,7 @@ import pandas as pd
 import time
 
 df = pd.read_csv("urls.csv")
-urls = df["URL"].tolist
+urls = df["URL"].tolist()
 
 def get_title(driver):
     title = None
@@ -18,6 +18,18 @@ def get_title(driver):
         return title
 
     return title.split('-')
+
+def get_brand(driver):
+    brand = None
+
+    try:
+        title = get_title(driver)
+        brand = title[0].strip().split()[0] if title else None
+    except:
+            return brand
+
+    return brand.strip()
+
 
 def get_name(driver):
     name = None
@@ -75,7 +87,7 @@ def get_image(driver):
     image = None
 
     try:
-        image_element = driver.find_element(By.XPATH, "//div[@class ='box-gallery' ]//div[@class = 'swiper-slide swiper-slide-active']/img")
+        image_element = driver.find_element(By.XPATH, "//div[@class ='box-gallery' ]//div[@class = 'swiper-slide swiper-slide-active']//img")
         image = image_element.get_attribute("src")
     except:
         return image
@@ -107,7 +119,7 @@ def scrape_data(driver):
     wait = WebDriverWait(driver, 15)
 
     # Thứ tự các thuộc tính cần lấy
-    info_order = ["CPU", "RAM", "capacity", "Time", "battery", "screen size", "os", "display technology", "screen resolution", "SIM", "size", "weight", "bluetooth", "refresh rate"]
+    info_order = ["CPU", "RAM", "capacity", "Time", "battery", "screen size", "os", "display technology", "screen resolution", "SIM", "size", "weight", "bluetooth", "refresh rate", "GPU"]
     info_labels = {
         "CPU": "Chip",
         "RAM": "Dung lượng RAM",
@@ -122,7 +134,8 @@ def scrape_data(driver):
         "size": "Kích thước",
         "weight": "Trọng lượng",
         "bluetooth": "Bluetooth",
-        "refresh rate": "Tần số quét"
+        "refresh rate": "Tần số quét",
+        "GPU": "GPU"
     }
 
     # Khởi tạo danh sách kết quả với None
@@ -145,7 +158,7 @@ def scrape_data(driver):
             print("Không tìm thấy nút mở thông số!")
 
         # Lấy thông tin từng trường
-        for idx in range(len(info_order) - 3):  
+        for idx in range(len(info_order) - 5):  
             key = info_order[idx]
             label = info_labels[key]
             xpath = f"//div[@class='block-content-product-right']//p[contains(text(), '{label}')]/following-sibling::div"
@@ -157,7 +170,7 @@ def scrape_data(driver):
                 pass
 
         
-        for idx in range(len(info_order) - 3, len(info_order) - 2): 
+        for idx in range(len(info_order) - 5, len(info_order) - 3): 
             key = info_order[idx]
             label = info_labels[key]
             xpath = f"//div[@class='block-content-product-right']//p[text()='{label}']/following-sibling::div"
@@ -168,7 +181,7 @@ def scrape_data(driver):
             except:
                 pass
                 
-        for idx in range(len(info_order) - 2, len(info_order)): 
+        for idx in range(len(info_order) - 4, len(info_order)): 
             key = info_order[idx]
             label = info_labels[key]
             xpath = f"//div[@class='block-content-product-right']//a[contains(text(), '{label}')]/parent::p/following-sibling::div"
@@ -183,3 +196,54 @@ def scrape_data(driver):
         return result
 
     return result
+
+driver = webdriver.Chrome()
+
+data = []
+
+i = 0
+
+for url in urls:
+    i += 1
+    print(i, "/", len(urls))
+    driver.get(url)
+
+    name = get_name(driver)
+    brand = get_brand(driver)
+    color = get_color(driver)
+    condition = get_condition(driver)
+    price_old, price_new = get_price(driver)
+    image = get_image(driver)
+    warranty = "6 tháng"
+    CPU, RAM, capacity, Time, battery, screen_size, operating_system, display_technology, screen_resolution, SIM, size, weight, bluetooth, refresh_rate, GPU = scrape_data(driver)
+
+    data.append({
+        'name': name,
+        'brand': brand,
+        'color': color,
+        'condition': condition,
+        'price_old': price_old,
+        'price_new': price_new,
+        'image': image,
+        'warranty': warranty,
+        'CPU': CPU,
+        'RAM': RAM,
+        'capacity': capacity,
+        'time': time,
+        'battery': battery,
+        'screen_size': screen_size,
+        'operating_system' : operating_system,
+        'display_technology' : display_technology,
+        'screen_resolution' : screen_resolution,
+        'SIM' : SIM,
+        'size' : size,
+        'weight' : weight,
+        'bluetooth' : bluetooth,
+        'refresh_rate' : refresh_rate,
+        'GPU' : GPU
+    })
+
+driver.quit()
+
+df = pd.DataFrame(data)
+df.to_csv('raw_data.csv', index=False, encoding='utf-8-sig')
