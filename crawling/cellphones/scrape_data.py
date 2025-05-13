@@ -118,7 +118,6 @@ def scroll_to_button(driver, button_class_name):
 def scrape_data(driver):
     wait = WebDriverWait(driver, 15)
 
-    # Thứ tự các thuộc tính cần lấy
     info_order = ["CPU", "RAM", "capacity", "Time", "battery", "screen size", "os", "display technology", "screen resolution", "SIM", "size", "weight", "bluetooth", "refresh rate", "GPU"]
     info_labels = {
         "CPU": "Chip",
@@ -138,7 +137,13 @@ def scrape_data(driver):
         "GPU": "GPU"
     }
 
-    # Khởi tạo danh sách kết quả với None
+    # Ánh xạ từng trường với loại xpath khác nhau
+    xpath_type_map = {
+        "default": ["CPU", "RAM", "capacity", "Time", "battery", "screen size", "os", "display technology", "screen resolution"],
+        "text_equals": ["SIM", "size"],
+        "a_contains": ["weight", "bluetooth", "refresh rate", "GPU"]
+    }
+
     result = [None] * len(info_order)
 
     try:
@@ -149,7 +154,7 @@ def scrape_data(driver):
         except:
             pass
 
-        # Click vào nút xem thông số kỹ thuật
+        # Mở thông số kỹ thuật
         button = scroll_to_button(driver, "button__show-modal-technical")
         if button:
             driver.execute_script("arguments[0].click();", button)
@@ -157,45 +162,31 @@ def scrape_data(driver):
         else:
             print("Không tìm thấy nút mở thông số!")
 
-        # Lấy thông tin từng trường
-        for idx in range(len(info_order) - 5):  
-            key = info_order[idx]
+        # Duyệt qua từng trường để lấy dữ liệu
+        for idx, key in enumerate(info_order):
             label = info_labels[key]
-            xpath = f"//div[@class='block-content-product-right']//p[contains(text(), '{label}')]/following-sibling::div"
-    
+
+            if key in xpath_type_map["default"]:
+                xpath = f"//div[@class='block-content-product-right']//p[contains(text(), '{label}')]/following-sibling::div"
+            elif key in xpath_type_map["text_equals"]:
+                xpath = f"//div[@class='block-content-product-right']//p[text()='{label}']/following-sibling::div"
+            elif key in xpath_type_map["a_contains"]:
+                xpath = f"//div[@class='block-content-product-right']//a[contains(text(), '{label}')]/parent::p/following-sibling::div"
+            else:
+                continue  # Bỏ qua nếu không khớp loại
+
             try:
                 element = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-                result[idx] = driver.execute_script("return arguments[0].textContent;", element)
+                result[idx] = driver.execute_script("return arguments[0].textContent;", element).strip()
             except:
                 pass
 
-        
-        for idx in range(len(info_order) - 5, len(info_order) - 3): 
-            key = info_order[idx]
-            label = info_labels[key]
-            xpath = f"//div[@class='block-content-product-right']//p[text()='{label}']/following-sibling::div"
-        
-            try:
-                element = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-                result[idx] = driver.execute_script("return arguments[0].textContent;", element)
-            except:
-                pass
-                
-        for idx in range(len(info_order) - 4, len(info_order)): 
-            key = info_order[idx]
-            label = info_labels[key]
-            xpath = f"//div[@class='block-content-product-right']//a[contains(text(), '{label}')]/parent::p/following-sibling::div"
-        
-            try:
-                element = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-                result[idx] = driver.execute_script("return arguments[0].textContent;", element)
-            except:
-                pass
-                           
-    except:
+    except Exception as e:
+        print("Lỗi trong quá trình scrape:", str(e))
         return result
 
     return result
+
 
 driver = webdriver.Chrome()
 
@@ -229,7 +220,7 @@ for url in urls:
         'CPU': CPU,
         'RAM': RAM,
         'capacity': capacity,
-        'time': time,
+        'time': Time,
         'battery': battery,
         'screen_size': screen_size,
         'operating_system' : operating_system,
