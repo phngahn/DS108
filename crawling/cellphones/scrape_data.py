@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
+import re
 import time
 
 df = pd.read_csv("urls.csv")
@@ -87,12 +88,24 @@ def get_image(driver):
     image = None
 
     try:
-        image_element = driver.find_element(By.XPATH, "//div[@class ='box-gallery' ]//div[@class = 'swiper-slide swiper-slide-active']//img")
-        image = image_element.get_attribute("src")
+        image_elements = driver.find_elements(By.XPATH, "//li[contains(@class, 'item-variant')]/a")
+        image = [element.get_attribute("href") for element in image_elements]
     except:
         return image
 
     return image     
+
+def get_warranty(driver):
+    warranty = None
+
+    try:
+        warranty_elements = driver.find_elements(By.XPATH, "//div[@class = 'item-warranty-info']//div[@class = 'description']")
+        warranty_description = warranty_elements[1].text
+        warranty = re.search(r"\d+\s*tháng", warranty_description).group()
+    except:
+        return warranty
+
+    return warranty
 
 def scroll_to_button(driver, button_class_name):
     for _ in range(20):
@@ -116,7 +129,7 @@ def scroll_to_button(driver, button_class_name):
     return None  # Trả về None nếu không tìm thấy nút
 
 def scrape_data(driver):
-    wait = WebDriverWait(driver, 15)
+    wait = WebDriverWait(driver, 5)
 
     info_order = ["CPU", "RAM", "capacity", "Time", "battery", "screen size", "os", "display technology", "screen resolution", "SIM", "size", "weight", "bluetooth", "refresh rate", "GPU"]
     info_labels = {
@@ -187,7 +200,6 @@ def scrape_data(driver):
 
     return result
 
-
 driver = webdriver.Chrome()
 
 data = []
@@ -205,7 +217,7 @@ for url in urls:
     condition = get_condition(driver)
     price_old, price_new = get_price(driver)
     image = get_image(driver)
-    warranty = "6 tháng"
+    warranty = get_warranty(driver)
     CPU, RAM, capacity, Time, battery, screen_size, operating_system, display_technology, screen_resolution, SIM, size, weight, bluetooth, refresh_rate, GPU = scrape_data(driver)
 
     data.append({
