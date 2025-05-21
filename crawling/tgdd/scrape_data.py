@@ -163,8 +163,10 @@ def scrape_data(driver):
 driver = webdriver.Chrome()
 
 data = []
+i = 0
 
-for i, url in urls:
+for url in urls:
+    i = i + 11
     print(i, "/", len(urls))
     driver.get(url)
 
