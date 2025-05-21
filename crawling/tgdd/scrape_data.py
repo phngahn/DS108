@@ -166,7 +166,7 @@ data = []
 i = 0
 
 for url in urls:
-    i = i + 11
+    i = i + 1
     print(i, "/", len(urls))
     driver.get(url)
 
