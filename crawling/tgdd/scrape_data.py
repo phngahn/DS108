@@ -7,6 +7,7 @@ import time
 import re
 
 df = pd.read_csv('final_url.csv')
+df.columns = ['URL'] 
 urls = df["URL"].tolist()
 
 def get_price(driver):
@@ -91,52 +92,51 @@ def get_image(driver):
     return image
 
 def scrape_data(driver):
-    CPU = None
-    GPU = None
-    RAM = None
-    capacity = None
-    Time = None
-    battery = None
-    os = None
-    display_technology = None
-    screen_resolution = None
-    screen_size = None
-    refresh_rate = None
-    SIM = None
-    size = None
-    weight = None
-    bluetooth = None
-    brand = None
-    
+    CPU = GPU = RAM = capacity = Time = battery = os = None
+    display_technology = screen_resolution = screen_size = refresh_rate = SIM = None
+    size = weight = bluetooth = brand = None
+
     try:
         wait = WebDriverWait(driver, 4)
-        
-        button = wait.until(EC.visibility_of_element_located((By.XPATH, "//button[@class = 'btnViewFullSpec']")))
-        # Scroll tới button
-        driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", button)
 
-        # Click vào button
+        # Tìm và nhấn nút xem cấu hình chi tiết
+        button = wait.until(EC.visibility_of_element_located((By.XPATH, "//button[@class = 'btnViewFullSpec']")))
+        driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", button)
         driver.execute_script("arguments[0].click();", button)
 
+        # Cuộn đến cuối trang
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)  # Chờ nội dung tải ra nếu có lazy load
+
+        # Bắt đầu tìm các phần tử
         cpu_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Cấu hình & Bộ nhớ')]/following-sibling::table//span[contains(text(), 'Chip xử lý')]/parent::td/following-sibling::td/span/span")
         if not cpu_elements:
             cpu_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Cấu hình & Bộ nhớ')]/following-sibling::table//span[contains(text(), 'Chip xử lý')]/parent::td/following-sibling::td/span/a")
         gpu_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Cấu hình & Bộ nhớ')]/following-sibling::table//span[contains(text(), 'GPU')]/parent::td/following-sibling::td/span/a")
+        if not gpu_elements:
+            gpu_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Cấu hình & Bộ nhớ')]/following-sibling::table//span[contains(text(), 'GPU')]/parent::td/following-sibling::td/span/span")
         os_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Cấu hình & Bộ nhớ')]/following-sibling::table//a[contains(text(), 'Hệ điều hành')]/parent::td/following-sibling::td/span/span")
         ram_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Cấu hình & Bộ nhớ')]/following-sibling::table//a[contains(text(), 'RAM')]/parent::td/following-sibling::td/span/span")
         capacity_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Cấu hình & Bộ nhớ')]/following-sibling::table//span[contains(text(), 'Dung lượng lưu trữ')]/parent::td/following-sibling::td/span/span")
         battery_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Pin & Sạc')]/following-sibling::table//span[contains(text(), 'Dung lượng pin')]/parent::td/following-sibling::td/span/span")
         display_technology_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Camera & Màn hình')]/following-sibling::table//span[contains(text(), 'Công nghệ màn hình')]/parent::td/following-sibling::td/span/a")
         screen_resolution_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Camera & Màn hình')]/following-sibling::table//a[contains(text(), 'Độ phân giải màn hình')]/parent::td/following-sibling::td/span/span")
+        if not screen_resolution_elements:
+                screen_resolution_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Camera & Màn hình')]/following-sibling::table//a[contains(text(), 'Độ phân giải màn hình')]/parent::td/following-sibling::td/span/a")
+
         screen_size_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Camera & Màn hình')]/following-sibling::table//span[contains(text(), 'Màn hình rộng')]/parent::td/following-sibling::td/span/span")
-        refresh_rate_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Camera & Màn hình')]/following-sibling::table//span[contains(text(), 'Màn hình rộng')]/parent::td/following-sibling::td/span/span/a")
+        refresh_rate_elements = screen_size_elements  # Lấy cùng với screen_size
         SIM_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Kết nối')]/following-sibling::table//span[contains(text(), 'SIM')]/parent::td/following-sibling::td/span/a")
-        bluetooth_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Kết nối')]/following-sibling::table//a[contains(text(), 'Bluetooth')]/parent::td/following-sibling::td/span/span")
+        if not SIM_elements:
+                SIM_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Kết nối')]/following-sibling::table//span[contains(text(), 'SIM')]/parent::td/following-sibling::td/span/span")
+        bluetooth_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Kết nối')]/following-sibling::table//a[contains(text(), 'Bluetooth')]/parent::td/following-sibling::td//a")
+        if not bluetooth_elements:
+                bluetooth_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Kết nối')]/following-sibling::table//a[contains(text(), 'Bluetooth')]/parent::td/following-sibling::td/span/span")
         time_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Thiết kế & Chất liệu')]/following-sibling::table//span[contains(text(), 'Thời điểm ra mắt')]/parent::td/following-sibling::td/span/span")
         brand_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Thiết kế & Chất liệu')]/following-sibling::table//span[contains(text(), 'Hãng')]/parent::td/following-sibling::td/span")
         size_weight_elements = driver.find_elements(By.XPATH, "//div[contains(@class, 'speciTable speciFull')]//div[contains(text(), 'Thiết kế & Chất liệu')]/following-sibling::table//span[contains(text(), 'Kích thước, khối lượng')]/parent::td/following-sibling::td/span/span")
-        
-        # Lấy thông tin từ các thẻ
+
+        # Trích xuất dữ liệu
         CPU = cpu_elements[0].text if cpu_elements else None
         GPU = gpu_elements[0].text if gpu_elements else None
         os = os_elements[0].text if os_elements else None
@@ -147,27 +147,24 @@ def scrape_data(driver):
         display_technology = display_technology_elements[0].text if display_technology_elements else None
         screen_resolution = screen_resolution_elements[0].text if screen_resolution_elements else None
         screen_size = screen_size_elements[0].text.split('-')[0].strip() if screen_size_elements else None
-        refresh_rate = refresh_rate_elements[0].text if refresh_rate_elements else None
+        refresh_rate = screen_size_elements[0].text.split('-')[1].strip() if screen_size_elements and '-' in screen_size_elements[0].text else None
         SIM = SIM_elements[0].text if SIM_elements else None
         brand = brand_elements[0].text if brand_elements else None
         size = re.findall(r"[\d.]+", size_weight_elements[0].text)[:3] if size_weight_elements else None
-        weight = re.search(r"Nặng ([\d.]+) g", size_weight_elements[0].text).group(1) if size_weight_elements and re.search(r"Nặng ([\d.]+) g", size_weight_elements[0].text) else None
-        bluetooth = bluetooth_elements[0].text if bluetooth_elements else None
+        weight_match = re.search(r"Nặng ([\d.]+) g", size_weight_elements[0].text) if size_weight_elements else None
+        weight = weight_match.group(1) if weight_match else None
+        bluetooth = ', '.join([el.text for el in bluetooth_elements]) if bluetooth_elements else None
 
-
-    
     except:
         return CPU, GPU, os, RAM, capacity, Time, battery, display_technology, screen_resolution, screen_size, refresh_rate, SIM, brand, size, weight, bluetooth
-   
+
     return CPU, GPU, os, RAM, capacity, Time, battery, display_technology, screen_resolution, screen_size, refresh_rate, SIM, brand, size, weight, bluetooth
 
 driver = webdriver.Chrome()
 
 data = []
-i = 0
 
-for url in urls:
-    i += 1
+for i, url in urls:
     print(i, "/", len(urls))
     driver.get(url)
 
@@ -207,8 +204,5 @@ for url in urls:
 
 driver.quit()
 
-# Xuất file CSV
 df = pd.DataFrame(data)
-df.to_csv('raw_data.csv', index=False, encoding='utf-8-sig')
-
-
+df.to_csv("raw_data.csv", index=False, encoding='utf-8-sig')
