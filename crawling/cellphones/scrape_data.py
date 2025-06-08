@@ -203,7 +203,6 @@ def scrape_data(driver):
 driver = webdriver.Chrome()
 
 data = []
-
 i = 0
 
 for url in urls:

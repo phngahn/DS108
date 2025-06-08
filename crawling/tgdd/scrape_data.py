@@ -34,7 +34,7 @@ def get_warranty(driver):
     warranty = None
 
     try:
-        # Tìm tất cả các phần tử li có chữ 'Bảo hành'
+        # Tìm phần tử li có chữ 'Bảo hành'
         li_element = driver.find_element(By.XPATH, "//li[contains(., 'Bảo hành')]")
         warranty_element = li_element.find_element(By.CSS_SELECTOR, "strong")
         warranty = warranty_element.text
@@ -47,7 +47,7 @@ def get_condition(driver):
     condition = None
 
     try:
-        # Tìm tất cả các phần tử li có chữ 'Tình trạng sản phẩm'
+        # Tìm phần tử li có chữ 'Tình trạng sản phẩm'
         li_element = driver.find_element(By.XPATH, "//li[contains(., 'Tình trạng sản phẩm')]")
         condition_element = li_element.find_element(By.CSS_SELECTOR, "strong")
         condition = condition_element.text
@@ -60,7 +60,7 @@ def get_color(driver):
     color = None
 
     try:
-        # Tìm tất cả phần tử div có class là 'infocl'
+        # Tìm phần tử div có class là 'infocl'
         color_element = driver.find_element(By.XPATH, "//div[@class = 'infocl']/span[1]")
         color = color_element.text
     except:

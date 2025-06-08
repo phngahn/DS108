@@ -7,7 +7,7 @@ driver = webdriver.Chrome()
 url = "https://cellphones.com.vn/hang-cu/dien-thoai.html"
 driver.get(url)
 
-time.sleep(1000)
+time.sleep(10)
 
 elements = driver.find_elements(By.XPATH, "//div[@class = 'product-info']//a")
 url_item = []

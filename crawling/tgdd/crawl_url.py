@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 import pandas as pd
 import time
 
-### Lấy đường dẫn chung của sản phẩm
+# Lấy đường dẫn chung của sản phẩm
 driver = webdriver.Chrome()
 url = "https://www.thegioididong.com/may-doi-tra/dtdd?pi=15"
 driver.get(url)
@@ -16,13 +16,12 @@ for element in elements:
     href_value = element.get_attribute("href")
     url_item.append(href_value)
 
-
 driver.quit()
 
 df = pd.DataFrame(url_item, columns=["URL"])
 df.to_csv("urls.csv", index=False)
 
-### Lấy đường dẫn riêng của từng sản phẩm bên trong đường dẫn chung
+# Lấy đường dẫn riêng của từng sản phẩm bên trong đường dẫn chung
 driver = webdriver.Chrome()
 df = pd.read_csv("urls.csv")
 
