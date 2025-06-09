@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dự đoán giá điện thoại</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f3f4f6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 2.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 28rem; /* Equivalent to md:max-w-md */
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 1.25rem;
+        text-align: left;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+      }
+      select,
+      input[type="text"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        color: #1f2937;
+        background-color: #f9fafb;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+      select:focus,
+      input[type="text"]:focus {
+        border-color: #3b82f6;
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+      }
+      button {
+        width: 100%;
+        padding: 1rem;
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1.125rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+      }
+      button:hover {
+        background-color: #2563eb;
+      }
+      #result {
+        margin-top: 1.5rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #10b981;
+      }
+      .error-message {
+        margin-top: 1.5rem;
+        font-size: 1rem;
+        color: #ef4444;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">
+        Dự đoán giá điện thoại
+      </h1>
+      <form id="predictionForm" method="POST" action="/predict">
+        <div class="form-group">
+          <label for="name">Chọn tên máy:</label>
+          <select id="name" name="name" required>
+            {% for name in unique_names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="condition">Chọn tình trạng:</label>
+          <select id="condition" name="condition" required>
+            {% for cond in conditions %}
+            <option value="{{ cond }}">{{ cond }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit">Dự đoán giá</button>
+      </form>
+      <div id="result" class="hidden"></div>
+      <div id="error" class="error-message hidden"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("predictionForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault(); // Ngăn chặn form gửi đi theo cách truyền thống
+
+          const form = event.target;
+          const formData = new FormData(form);
+
+          try {
+            const response = await fetch(form.action, {
+              method: form.method,
+              body: formData,
+            });
+
+            const data = await response.json();
+            const resultDiv = document.getElementById("result");
+            const errorDiv = document.getElementById("error");
+
+            if (response.ok) {
+              resultDiv.textContent = "Giá dự đoán: " + data.predicted_price;
+              resultDiv.classList.remove("hidden");
+              errorDiv.classList.add("hidden");
+            } else {
+              errorDiv.textContent =
+                "Lỗi: " + (data.error || "Đã xảy ra lỗi không xác định.");
+              errorDiv.classList.remove("hidden");
+              resultDiv.classList.add("hidden");
+            }
+          } catch (error) {
+            console.error("Lỗi khi gửi yêu cầu:", error);
+            document.getElementById("error").textContent =
+              "Lỗi kết nối hoặc xử lý dữ liệu.";
+            document.getElementById("error").classList.remove("hidden");
+            document.getElementById("result").classList.add("hidden");
+          }
+        });
+    </script>
+  </body>
+</html>
