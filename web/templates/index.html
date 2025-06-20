@@ -111,37 +111,48 @@
       document
         .getElementById("predictionForm")
         .addEventListener("submit", async function (event) {
-          event.preventDefault(); // Ngăn chặn form gửi đi theo cách truyền thống
+          event.preventDefault();
 
-          const form = event.target;
-          const formData = new FormData(form);
+          const name = document.getElementById("name").value;
+          const condition = document.getElementById("condition").value;
+
+          const dataToSend = {
+            name: name,
+            condition: condition,
+          };
+
+          document.getElementById("result").classList.add("hidden");
+          document.getElementById("error").classList.add("hidden");
+          document.getElementById("result").textContent = "";
+          document.getElementById("error").textContent = "";
 
           try {
-            const response = await fetch(form.action, {
-              method: form.method,
-              body: formData,
+            const response = await fetch("/predict", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(dataToSend),
             });
 
             const data = await response.json();
+
             const resultDiv = document.getElementById("result");
             const errorDiv = document.getElementById("error");
 
             if (response.ok) {
               resultDiv.textContent = "Giá dự đoán: " + data.predicted_price;
               resultDiv.classList.remove("hidden");
-              errorDiv.classList.add("hidden");
             } else {
               errorDiv.textContent =
                 "Lỗi: " + (data.error || "Đã xảy ra lỗi không xác định.");
               errorDiv.classList.remove("hidden");
-              resultDiv.classList.add("hidden");
             }
           } catch (error) {
             console.error("Lỗi khi gửi yêu cầu:", error);
             document.getElementById("error").textContent =
               "Lỗi kết nối hoặc xử lý dữ liệu.";
             document.getElementById("error").classList.remove("hidden");
-            document.getElementById("result").classList.add("hidden");
           }
         });
     </script>
