@@ -196,10 +196,10 @@ except FileNotFoundError as e:
     exit()
 
 try:
-    lgbm_model = joblib.load(os.path.join(MODELING_PATH, 'lgbm_model.pkl'))
-    print("Đã tải mô hình LightGBM thành công từ ../modeling/lgbm_model.pkl.")
+    cb_model = joblib.load(os.path.join(MODELING_PATH, 'cb_model.pkl'))
+    print("Đã tải mô hình CatBoost thành công từ ../modeling/cb_model.pkl.")
 except FileNotFoundError as e:
-    print(f"Lỗi: Không tìm thấy file lgbm_model.pkl: {e}")
+    print(f"Lỗi: Không tìm thấy file cb_model.pkl: {e}")
     print("Vui lòng đảm bảo mô hình đã được huấn luyện và lưu trong thư mục 'modeling/'.")
     exit()
 
@@ -272,7 +272,7 @@ def predict():
 
         processed_input_data = prediction_pipeline.transform(input_data_for_pipeline)
 
-        predicted_price_thousand_vnd = lgbm_model.predict(processed_input_data)[0]
+        predicted_price_thousand_vnd = cb_model.predict(processed_input_data)[0]
 
         predicted_price_vnd = round(predicted_price_thousand_vnd * 1000)
 
