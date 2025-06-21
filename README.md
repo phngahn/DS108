@@ -22,8 +22,8 @@ Dự án xây dựng mô hình dự đoán giá điện thoại cũ dựa trên 
 
 Bài toán đặt ra là xây dựng một hệ thống dự đoán giá điện thoại cũ dựa trên bộ dữ liệu đã thu thập được.
 
-• Input: Dữ liệu về các thuộc tính của điện thoại cũ.
-• Output: Mức giá dự đoán.
+- Input: Dữ liệu về các thuộc tính của điện thoại cũ.
+- Output: Mức giá dự đoán.
 
 Mục tiêu là phát triển một hệ thống thông minh có khả năng phân tích và đưa ra mức giá dự đoán chính xác, hỗ trợ người dùng trong việc định giá, mua bán và trao đổi thiết bị cũ.
 
