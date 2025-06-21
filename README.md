@@ -33,22 +33,22 @@ Mục tiêu là phát triển một hệ thống thông minh có khả năng ph�
 ## Cấu trúc
 
 DS108/
-├── crawling/             # Scripts và dữ liệu thô từ quá trình thu thập
-│   ├── tgdd/             # Thu thập từ Thế Giới Di Động
-│   └── cellphones/       # Thu thập từ CellphoneS
-├── modeling/             # Notebook xây dựng mô hình và dữ liệu sau mã hóa
-│   ├── modeling/         # Chọn đặc trưng, mã hóa, huấn luyện mô hình
-│   ├── data/             # Dữ liệu sau khi xử lý & encode
-│   └── model/            # Mô hình sau huấn luyện
-├── preprocessing/        # Notebook và dữ liệu tiền xử lý
-│   ├── fill_missing_values/ # Xử lý giá trị thiếu
-│   ├── preprocessing/    # Làm sạch và chuẩn hóa
-│   ├── tidy_data/        # Dữ liệu đã chuẩn hóa
-│   └── updated_data/     # Dữ liệu sau khi điền thiếu
-├── web/                  # Giao diện và backend web
-│   ├── templates/        # HTML templates (index.html)
-│   └── app/              # Logic xử lý web
-└── README.md             # Tài liệu mô tả dự án
+├── crawling/                  # Scripts và dữ liệu thô từ quá trình thu thập
+│   ├── tgdd/                  # Thu thập từ Thế Giới Di Động
+│   └── cellphones/            # Thu thập từ CellphoneS
+├── preprocessing/             # Xử lý dữ liệu trước khi huấn luyện
+│   ├── fill_missing_values/   # Xử lý dữ liệu thiếu
+│   ├── preprocessing/         # Làm sạch và chuẩn hóa dữ liệu
+│   ├── tidy_data/             # Dữ liệu đã chuẩn hóa
+│   └── updated_data/          # Dữ liệu sau điền thiếu
+├── modeling/                  # Mã hóa đặc trưng, huấn luyện mô hình
+│   ├── modeling/              # Notebook huấn luyện mô hình
+│   ├── data/                  # Dữ liệu sau chọn và mã hóa
+│   └── model/                 # Mô hình đã huấn luyện
+├── web/                       # Giao diện người dùng
+│   ├── templates/             # Giao diện HTML
+│   └── app/                   # Mã nguồn backend
+└── README.md                  # Tài liệu mô tả dự án
 
 ## Các giai đoạn thực hiện
 
