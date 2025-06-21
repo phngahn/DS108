@@ -31,7 +31,7 @@ Mục tiêu là phát triển một hệ thống thông minh có khả năng ph�
 - Nguyễn Thảo Nga - 23520993
 
 ## Cấu trúc
-
+```
 DS108/
 ├── crawling/                  # Scripts và dữ liệu thô từ quá trình thu thập
 │   ├── tgdd/                  # Thu thập từ Thế Giới Di Động
@@ -49,7 +49,7 @@ DS108/
 │   ├── templates/             # Giao diện HTML
 │   └── app/                   # Mã nguồn backend
 └── README.md                  # Tài liệu mô tả dự án
-
+```
 ## Các giai đoạn thực hiện
 
 ### 1. Thu thập dữ liệu
