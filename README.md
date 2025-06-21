@@ -21,6 +21,7 @@
 Dự án xây dựng mô hình dự đoán giá điện thoại cũ dựa trên dữ liệu thực tế từ Thế Giới Di Động và CellphoneS. Dữ liệu bao gồm các đặc điểm kỹ thuật, tình trạng thiết bị và giá bán tại thời điểm giao dịch.
 
 Bài toán đặt ra là xây dựng một hệ thống dự đoán giá điện thoại cũ dựa trên bộ dữ liệu đã thu thập được.
+
 • Input: Dữ liệu về các thuộc tính của điện thoại cũ.
 • Output: Mức giá dự đoán.
 
