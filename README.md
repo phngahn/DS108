@@ -33,23 +33,22 @@ Mục tiêu là phát triển một hệ thống thông minh có khả năng ph�
 ## Cấu trúc
 
 DS108/
-│
-├── crawling/ # Thư mục chứa scripts thu thập dữ liệu và dữ liệu thô
-│ ├── tgdd/ # Scripts thu thập dữ liệu từ thế giới di động và dữ liệu thô
-│ ├── cellphones/ # Scripts thu thập dữ liệu từ cellphones và dữ liệu thô
-├── modeling/ # Thư mục chứa notebook chọn, mã hóa thuộc tính, mô hình
-│ ├── modeling # Notebook chọn, mã hóa thuộc tính, mô hình
-│ ├── data/ # Dữ liệu sau chọn và mã hóa thuộc tính
-│ └── model/ # Các mô hình sau huấn luyện
-├── preprocessing/ # Thư mục chứa notebook điền thiếu, tiền xử lí dữ liệu và dữ liệu
-│ ├── fill_missing_values # Notebook điền thiếu dữ liệu
-│ ├── preprocessing # Notebook tiền xử lí dữ liệu
-│ ├── tidy_data # Dữ liệu sau tiền xử lí
-│ └── updated_data # Dữ liệu sau điền thiếu
-├── web/ # Web triển khai mô hình
-│ ├── templates/ # Thư mục chứa file giao diện HTML của ứng dụng web
-│ └── app/ # Web
-└── README.md # Tài liệu mô tả dự án
+├── crawling/             # Scripts và dữ liệu thô từ quá trình thu thập
+│   ├── tgdd/             # Thu thập từ Thế Giới Di Động
+│   └── cellphones/       # Thu thập từ CellphoneS
+├── modeling/             # Notebook xây dựng mô hình và dữ liệu sau mã hóa
+│   ├── modeling/         # Chọn đặc trưng, mã hóa, huấn luyện mô hình
+│   ├── data/             # Dữ liệu sau khi xử lý & encode
+│   └── model/            # Mô hình sau huấn luyện
+├── preprocessing/        # Notebook và dữ liệu tiền xử lý
+│   ├── fill_missing_values/ # Xử lý giá trị thiếu
+│   ├── preprocessing/    # Làm sạch và chuẩn hóa
+│   ├── tidy_data/        # Dữ liệu đã chuẩn hóa
+│   └── updated_data/     # Dữ liệu sau khi điền thiếu
+├── web/                  # Giao diện và backend web
+│   ├── templates/        # HTML templates (index.html)
+│   └── app/              # Logic xử lý web
+└── README.md             # Tài liệu mô tả dự án
 
 ## Các giai đoạn thực hiện
 
@@ -105,6 +104,9 @@ Mã hóa categorical: Các thuộc tính phân loại được mã hóa bằng c
 Phân khúc dữ liệu: Áp dụng K-Means để chia thành 3 nhóm điện thoại dựa trên đặc điểm kỹ thuật, hỗ trợ mô hình học được mối quan hệ tổng thể.
 
 Chia tập dữ liệu: Dữ liệu hoàn chỉnh được chia thành train.csv, dev.csv, test.csv theo tỉ lệ 6:2:2.
+
+![Các thuộc tính của bộ dữ liệu](https://github.com/user-attachments/assets/36fd2266-553b-4d5b-9c52-921fd2666e5d)
+
 
 ### 6. Mô hình
 
